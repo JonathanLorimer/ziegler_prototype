@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Michael Ziegler Prototype</title>
+    <script>
+
+    function validate(evt) {
+      var theEvent = evt || window.event;
+      var key = theEvent.keyCode || theEvent.which;
+      key = String.fromCharCode( key );
+      var regex = /[0-9]|\./;
+      if( !regex.test(key) ) {
+        theEvent.returnValue = false;
+        if(theEvent.preventDefault) theEvent.preventDefault();
+      }
+    }
+
+    window.addEventListener( 'load', init );
+    function init() {
+
+        // calculate total balance owed
+        document.getElementsByClassName("price")[0].addEventListener("keyup", function(e){
+            if (event.which >= 37 && event.which <= 40) return;
+                this.value = this.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            document.getElementsByClassName("co-op-price")[0].innerHTML= `<span>Price: </span><span>${e.target.value}</span>`
+        })
+        document.getElementsByClassName("discount")[0].addEventListener("keyup", function(e){
+            if (event.which >= 37 && event.which <= 40) return;
+                this.value = this.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            document.getElementsByClassName("co-op-discount")[0].innerHTML= `<span>Discount: </span><span>${e.target.value}</span>`
+        })
+        document.getElementsByClassName("calculate-total-balance")[0].addEventListener("click", function(e){
+            const initial_commission = parseInt(document.getElementsByClassName("initial-commission")[0].innerHTML.replace(/\,/g,''))
+            const balance_commission = parseInt(document.getElementsByClassName("balance-commission")[0].innerHTML.replace(/\,/g,''))
+            const initial__co_op_commission = parseInt(document.getElementsByClassName("initial-co-op-commission")[0].innerHTML.replace(/\,/g,''))
+            const balance_co_op_commission = parseInt(document.getElementsByClassName("balance-co-op-commission")[0].innerHTML.replace(/\,/g,''))
+            const listing_price = parseInt(document.getElementsByClassName("price")[0].value.replace(/\,/g,''))
+            const discount = parseInt(document.getElementsByClassName("discount")[0].value.replace(/\,/g,''))
+            const total_balance = initial_commission + balance_commission + initial__co_op_commission + balance_co_op_commission + listing_price - discount
+            if (initial_commission + 1 && balance_commission + 1 && initial__co_op_commission + 1 && balance_co_op_commission + 1 && listing_price + 1) {
+            document.getElementsByClassName("total-balance")[0].innerHTML= ` ${total_balance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+            } else {
+                document.getElementsByClassName("total-balance")[0].innerHTML= `Please complete all forms (insert 0 if the field does not apply)`
+            }
+        })
+
+        // calculate gross commission
+        document.getElementsByClassName("initial-percentage")[0].addEventListener("keyup", function(e){
+            const listing_price = parseInt(document.getElementsByClassName("price")[0].value.replace(/\,/g,''))
+            let initial_value = 0
+            if (listing_price > 100000) {
+            initial_value = (e.target.value) * 100000
+            } else {
+            initial_value = (e.target.value) * listing_price
+            }
+            document.getElementsByClassName("initial-commission")[0].innerHTML= ` ${(initial_value / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+        })
+        document.getElementsByClassName("balance-percentage")[0].addEventListener("keyup", function(e){
+            const listing_price = parseInt(document.getElementsByClassName("price")[0].value.replace(/\,/g,''))
+            const initial_value = (e.target.value) * listing_price
+            document.getElementsByClassName("balance-commission")[0].innerHTML= ` ${(initial_value / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+        })
+        document.getElementsByClassName("calculate-gross-commission")[0].addEventListener("click", function(e){
+            const initial_commission = parseInt(document.getElementsByClassName("initial-commission")[0].innerHTML.replace(/\,/g,''))
+            const balance_commission = parseInt(document.getElementsByClassName("balance-commission")[0].innerHTML.replace(/\,/g,''))
+            if (initial_commission + 1 && balance_commission + 1){
+                document.getElementsByClassName("total-commission")[0].innerHTML= ` ${(initial_commission + balance_commission).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+            } else {
+                document.getElementsByClassName("total-commission")[0].innerHTML= `Please enter a valid commission percentages (0 if no fee applies)`
+            }
+        })
+
+        // calculate co-op commission
+        document.getElementsByClassName("co-op-initial-percentage")[0].addEventListener("keyup", function(e){
+            const listing_price = parseInt(document.getElementsByClassName("price")[0].value.replace(/\,/g,''))
+            let initial_value = 0
+            if (listing_price > 100000) {
+            initial_value = (e.target.value) * 100000
+            } else {
+            initial_value = (e.target.value) * listing_price
+            }
+            document.getElementsByClassName("initial-co-op-commission")[0].innerHTML= ` ${(initial_value / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+        })
+        document.getElementsByClassName("co-op-balance-percentage")[0].addEventListener("keyup", function(e){
+            const listing_price = parseInt(document.getElementsByClassName("price")[0].value.replace(/\,/g,''))
+            const initial_value = e.target.value * listing_price
+            document.getElementsByClassName("balance-co-op-commission")[0].innerHTML= ` ${(initial_value / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+        })
+        document.getElementsByClassName("calculate-co-op-commission")[0].addEventListener("click", function(e){
+            const initial_commission = parseInt(document.getElementsByClassName("initial-co-op-commission")[0].innerHTML.replace(/\,/g,''))
+            const balance_commission = parseInt(document.getElementsByClassName("balance-co-op-commission")[0].innerHTML.replace(/\,/g,''))
+            
+            if (initial_commission + 1 && balance_commission + 1){
+                document.getElementsByClassName("total-co-op-commission")[0].innerHTML= ` ${(initial_commission + balance_commission).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+            } else {
+                document.getElementsByClassName("total-co-op-commission")[0].innerHTML= ` Please enter a valid commission percentages (0 if no fee applies)`
+            }
+            
+        })
+
+
+      }
+    </script>
+    <style type="text/css">
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0; 
+}
+    </style>
+  </head>
+  <body>
+    <div class='gross-commission'>
+        <h1>Gross Commission</h1>
+        <label>Price ($)</label><br>
+        <input class="price" type='text' onkeypress='validate(event)' name="price"><br>
+        <label>Commission on First 100k (%)</label><br>
+        <input class="initial-percentage" type='text' onkeypress='validate(event)'name="initial-percentage"><span class="initial-commission"></span><br>
+        <label>Commission on Balance (%)</label><br>
+        <input class="balance-percentage" type='text' onkeypress='validate(event)'name="balance-percentage"><span class="balance-commission"></span><br>
+        <label>Discount ($)</label><br>
+        <input class="discount" type='text' onkeypress='validate(event)'name="discount"><br>
+        <button class="calculate-gross-commission">Calculate Gross-Commission</button>
+        <div class="total-commission"></div>
+    </div>
+    <div class='coop-commission'>
+        <h1>Co-op Commission</h1>
+        <div class='co-op-price'><span>Price: </span></div><br>
+        <label>Co-op Commission on First 100k (%)</label><br>
+        <input class="co-op-initial-percentage" type='text' onkeypress='validate(event)'name="initial-percentage"><span class="initial-co-op-commission"></span><br>
+        <label>Co-op Commission on Balance (%)</label><br>
+        <input class="co-op-balance-percentage" type='text' onkeypress='validate(event)'name="balance-percentage"><span class="balance-co-op-commission"></span><br>
+        <div class="co-op-discount"><span>Discount: </span></div>
+        <button class="calculate-co-op-commission">Calculate Co-Op-Commission</button>
+        <div class="total-co-op-commission"></div>
+    </div>
+    <button class="calculate-total-balance">Calculate Total Balance</button>
+    <div class="total-balance"></div>
+  </body>
+</html>
